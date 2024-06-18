@@ -2,14 +2,7 @@
 from datetime import datetime, timedelta
 
 from api_calls.schedule_source_api.schedule_source_api import updateAvailability, getAllActiveEmployees, getEmployeesAtLocation
-
-# Define the employee class schedule data
-employee_classSchedule = [
-    {"subject": "Physics", "start": "09:15:00 AM", "end": "11:00:00 PM", "meetingDays": "UM"},
-    {"subject": "Math", "start": "2:05:00 PM", "end": "3:15:00 PM", "meetingDays": "UR"},
-    {"subject": "Hello", "start": "11:35:00 AM", "end": "9:45:00 PM", "meetingDays": "FA"},
-    {"subject": "Science", "start": "05:00:00 AM", "end": "07:25:00 AM", "meetingDays": "T"}
-]
+from api_calls.workday_api.workday_api import getStudentSchedule
 
 def generate_available_times_per_day():
     """Generate a dictionary with available times for each day of the week."""
@@ -76,36 +69,35 @@ def format_ranges_12_hour(ranges):
         formatted_ranges.append(f"{start_12}-{end_12}")
     return ';'.join(formatted_ranges) + ';'
 
-# Generate available times per day
-available_times_per_day = generate_available_times_per_day()
-
-# Process the class schedule to update available times
-available_times_per_day = process_class_schedule(available_times_per_day, employee_classSchedule)
-
-# Condense available times into ranges for each day
-condensed_available_times_per_day = condense_available_times_per_day(available_times_per_day)
-
-avail_ranges = []
-# Convert to 12-hour format and print the results
-for day, ranges in condensed_available_times_per_day.items():
-    formatted_ranges = format_ranges_12_hour(ranges)
-    print(f"{day}: {formatted_ranges}")
-    avail_ranges.append(formatted_ranges)
+def getAvailableRanges(employee_id):
+    employee_classSchedule = getStudentSchedule(employee_id)
     
-employee_id_list = getEmployeesAtLocation("MU Market Cafe")
+    # Generate available times per day
+    available_times_per_day = generate_available_times_per_day()
+    # Process the class schedule to update available times
+    available_times_per_day = process_class_schedule(available_times_per_day, employee_classSchedule)
+    # Condense available times into ranges for each day
+    condensed_available_times_per_day = condense_available_times_per_day(available_times_per_day)
 
-for employee_id in employee_id_list:
-    # TO-DO
-    # Create a method that takes in Student ID From GUI
-    # And updates it in the request body
-    updatedData = []
-    for i in range(1, 8):
-        updatedData.append({
-            "DayId": i,
-            "AvailableRanges": avail_ranges[i-1], 
-            "EmployeeExternalId": employee_id,
-            "Enabled": 1,
-            "Rank": 1
-        })
-    updateAvailability(updatedData)
-    print("UPDATED: " + str(employee_id))
+    avail_ranges = []
+    # Convert to 12-hour format and print the results
+    for day, ranges in condensed_available_times_per_day.items():
+        formatted_ranges = format_ranges_12_hour(ranges)
+        avail_ranges.append(formatted_ranges)
+        
+    return avail_ranges
+
+def updateAvailabilityForEmployees(employee_id_list):
+    for employee_id in employee_id_list:
+        ranges = getAvailableRanges(employee_id)
+        updatedData = []
+        for i in range(1, 8):
+            updatedData.append({
+                "DayId": i,
+                "AvailableRanges": ranges[i-1], 
+                "EmployeeExternalId": employee_id,
+                "Enabled": 1,
+                "Rank": 1
+            })
+        updateAvailability(updatedData)
+        print("UPDATED: " + str(employee_id))

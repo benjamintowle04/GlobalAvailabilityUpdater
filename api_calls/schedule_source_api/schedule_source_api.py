@@ -171,7 +171,8 @@ def getLocations():
         if item["ExternalBusinessId"] is not None:
             if not(isinstance(item["ExternalBusinessId"], int)):
                 filtered_data.append(item)
-                
+    
+    print(filtered_data)        
     return filtered_data
 
 
@@ -306,7 +307,7 @@ def getEmployeesAtLocation(location):
     for item in data:
         id_list.append(item["ExternalId"])
         
-            
+    print(id_list)  
     return id_list
-    
-    
+
+getLocations()    

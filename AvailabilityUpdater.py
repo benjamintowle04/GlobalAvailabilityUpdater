@@ -92,7 +92,7 @@ for day, ranges in condensed_available_times_per_day.items():
     print(f"{day}: {formatted_ranges}")
     avail_ranges.append(formatted_ranges)
     
-employee_id_list = getEmployeesAtLocation("DSSO")
+employee_id_list = getEmployeesAtLocation("MU Market Cafe")
 
 for employee_id in employee_id_list:
     # TO-DO

@@ -10,7 +10,7 @@ employee_classSchedule = [
     {"subject": "Hello", "start": "11:35:00 AM", "end": "9:45:00 PM", "meetingDays": "FA"},
     {"subject": "Science", "start": "05:00:00 AM", "end": "07:25:00 AM", "meetingDays": "T"}
 ]
-
+4
 def generate_available_times_per_day():
     """Generate a dictionary with available times for each day of the week."""
     available_times_per_day = {day: [f"{hour:02d}:{minute:02d}" for hour in range(24) for minute in range(0, 60, 5)] for day in ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]}
@@ -91,16 +91,11 @@ for day, ranges in condensed_available_times_per_day.items():
     formatted_ranges = format_ranges_12_hour(ranges)
     print(f"{day}: {formatted_ranges}")
     avail_ranges.append(formatted_ranges)
-    
-    
-#Retrieve all employee's external id numbers
-employees = getAllActiveEmployees()
-employeeIds = []
-for person in employees:
-    if person["ExternalId"]:
-        employeeIds.append(person["ExternalId"])
 
 
+# TO-DO
+# Create a method that takes in Student ID From GUI
+# And updates it in the request body
 updatedData = []
 for i in range(1, 8):
     updatedData.append({

@@ -44,8 +44,6 @@ def authenticate(code, username, password):
     response_json = response.json()
     api_token = response_json["Response"]["APIToken"]
     session_id = response_json["Response"]["SessionId"]
-    print("SESSION-ID: " + str(session_id))
-    print("API-TOKEN: " + str(api_token))
     return {"sessionId": session_id, "apiToken": api_token}
 
 
@@ -234,7 +232,6 @@ def updateAvailability(newAvailability):
     conn.request("PUT", url, payload_json, headers)
     res = conn.getresponse()
     data = res.read()
-    print(data)
     
 #API Call to retrieve all employees with no termination date (i.e active employees)
 def getAllActiveEmployees():
@@ -270,4 +267,46 @@ def getAllActiveEmployees():
     print(data)
     return data
 
-authenticate("isu", "seans3", "8032")
+#API call to retrieve active employees at a given facility
+#Param - location - the facility code we are interested in
+#Returns a list of employees at the given location
+def getEmployeesAtLocation(location):
+    credentials = authenticate("ISU", "seans3", "8032")
+    conn = http.client.HTTPSConnection("test.tmwork.net")
+    payload = ""
+    
+    headers = {
+        "Content-Type": "application/json",
+        "x-session-id": credentials["sessionId"],
+        "x-api-token": credentials["apiToken"],
+    }
+    
+    path = Paths.SS_EMPLOYEES_LOCATION.value
+    query_params = {
+        "Fields": "ExternalId",
+        "BusinessExternalId": location,
+        "TermDate": "{NULL}"
+    }
+    
+    encoded_query_params = urlencode(query_params)
+    url = f"{path}?{encoded_query_params}"
+
+    conn.request(
+        "GET",
+        url,
+        payload,
+        headers,
+    )
+    
+    res = conn.getresponse()
+    data = res.read().decode('utf-8')
+    data = parse_tsv(data)
+    
+    id_list = []
+    for item in data:
+        id_list.append(item["ExternalId"])
+        
+            
+    return id_list
+    
+    

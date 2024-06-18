@@ -4,22 +4,22 @@ from datetime import datetime, timedelta
 from api_calls.schedule_source_api.schedule_source_api import updateAvailability, getAllActiveEmployees, getEmployeesAtLocation
 from api_calls.workday_api.workday_api import getStudentSchedule
 
+#Generate a dictionary with available times for each day of the week.
 def generate_available_times_per_day():
-    """Generate a dictionary with available times for each day of the week."""
     available_times_per_day = {day: [f"{hour:02d}:{minute:02d}" for hour in range(24) for minute in range(0, 60, 5)] for day in ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]}
     return available_times_per_day
 
+#Convert a time string in "HH:MM" format to minutes from midnight.
 def time_to_minutes(time_str):
-    """Convert a time string in "HH:MM" format to minutes from midnight."""
     time_obj = datetime.strptime(time_str, "%H:%M")
     return time_obj.hour * 60 + time_obj.minute
 
+#Remove times from the available times list that fall within the class time range.
 def remove_class_times(available_times, start, end):
-    """Remove times from the available times list that fall within the class time range."""
     return [time for time in available_times if not (start <= time_to_minutes(time) < end)]
 
+#Process the class schedule and update available times by removing class times.
 def process_class_schedule(available_times_per_day, class_schedule):
-    """Process the class schedule and update available times by removing class times."""
     days_map = {'U': 'Sunday', 'M': 'Monday', 'T': 'Tuesday', 'W': 'Wednesday', 'R': 'Thursday', 'F': 'Friday', 'A': 'Saturday'}
 
     for class_info in class_schedule:
@@ -33,8 +33,8 @@ def process_class_schedule(available_times_per_day, class_schedule):
 
     return available_times_per_day
 
+#Condense a list of times into ranges.
 def condense_times(times):
-    """Condense a list of times into ranges."""
     if not times:
         return []
 
@@ -50,17 +50,17 @@ def condense_times(times):
     ranges.append(f"{start}-{previous}")
     return ranges
 
+# Condense the available times into ranges for each day of the week
 def condense_available_times_per_day(available_times_per_day):
-    """Condense the available times into ranges for each day of the week."""
     return {day: condense_times(times) for day, times in available_times_per_day.items()}
 
+#Convert a time string from 24-hour format to 12-hour format.
 def convert_to_12_hour_format(time_str):
-    """Convert a time string from 24-hour format to 12-hour format."""
     time_obj = datetime.strptime(time_str, "%H:%M")
     return time_obj.strftime("%I:%M%p").lstrip('0').lower()
 
+#Convert and format time ranges from 24-hour format to 12-hour format.
 def format_ranges_12_hour(ranges):
-    """Convert and format time ranges from 24-hour format to 12-hour format."""
     formatted_ranges = []
     for time_range in ranges:
         start, end = time_range.split('-')
@@ -69,6 +69,7 @@ def format_ranges_12_hour(ranges):
         formatted_ranges.append(f"{start_12}-{end_12}")
     return ';'.join(formatted_ranges) + ';'
 
+#Get the available time ranges for a given employee using their class schedule
 def getAvailableRanges(employee_id):
     employee_classSchedule = getStudentSchedule(employee_id)
     
@@ -87,6 +88,7 @@ def getAvailableRanges(employee_id):
         
     return avail_ranges
 
+# Uses the ss api client to update the availability on schedule source's remote server for a given location
 def updateAvailabilityForEmployees(employee_id_list):
     for employee_id in employee_id_list:
         ranges = getAvailableRanges(employee_id)

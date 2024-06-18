@@ -1,11 +1,14 @@
 ############################################# GUI FOR Availability Updater #############################################
 import tkinter as tk
 from tkinter import ttk, messagebox
-
-
 ################################################# Opening Window #######################################################
+
+# Global Variable
+student_id = None
+
 def on_ok():
-    print(f"External ID: {external_id.get()}")
+    student_id = external_id.get()  # Store the student ID in a variable
+    print(student_id)
     root.quit()  # Quit the application when OK is pressed
 
 root = tk.Tk()

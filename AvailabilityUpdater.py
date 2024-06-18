@@ -1,16 +1,16 @@
 ##################################################### Update Availability ##############################################
 from datetime import datetime, timedelta
-
 from api_calls.schedule_source_api.schedule_source_api import updateAvailability, getAllActiveEmployees
+from Application import student_id
 
 # Define the employee class schedule data
 employee_classSchedule = [
-    {"subject": "Physics", "start": "09:15:00 AM", "end": "11:00:00 PM", "meetingDays": "UM"},
-    {"subject": "Math", "start": "6:05:00 PM", "end": "3:15:00 PM", "meetingDays": "UR"},
-    {"subject": "Hello", "start": "11:35:00 AM", "end": "9:45:00 PM", "meetingDays": "FA"},
-    {"subject": "Science", "start": "05:00:00 AM", "end": "07:25:00 AM", "meetingDays": "T"}
+    {"subject": "Physics", "start": "08:00:00 AM", "end": "11:00:00 PM", "meetingDays": "UM"},
+    {"subject": "Math", "start": "08:00:00 AM", "end": "3:15:00 PM", "meetingDays": "UR"},
+    {"subject": "Hello", "start": "08:00:00 AM", "end": "9:45:00 PM", "meetingDays": "FA"},
+    {"subject": "Science", "start": "08:00:00 AM", "end": "07:25:00 AM", "meetingDays": "T"}
 ]
-4
+
 def generate_available_times_per_day():
     """Generate a dictionary with available times for each day of the week."""
     available_times_per_day = {day: [f"{hour:02d}:{minute:02d}" for hour in range(24) for minute in range(0, 60, 5)] for day in ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]}
@@ -92,18 +92,20 @@ for day, ranges in condensed_available_times_per_day.items():
     print(f"{day}: {formatted_ranges}")
     avail_ranges.append(formatted_ranges)
 
+def update_availability(student_id, avail_ranges):
+    """Update availability for a student based on available ranges."""
+    updated_data = []
+    for i in range(1, 8):
+        updated_data.append({
+            "DayId": i,
+            "AvailableRanges": avail_ranges[i-1],
+            "StudentId": student_id,
+            "Enabled": 1
 
-# TO-DO
-# Create a method that takes in Student ID From GUI
-# And updates it in the request body
-updatedData = []
-for i in range(1, 8):
-    updatedData.append({
-        "DayId": i,
-        "AvailableRanges": avail_ranges[i-1], 
-        "EmployeeExternalId": 170601496,
-        "FirstName"
-        "Enabled": 1
-    })
-updateAvailability(updatedData)
-print("UPDATED")
+        })
+
+
+    updateAvailability(updated_data)
+    print("UPDATED")
+    print(student_id)
+

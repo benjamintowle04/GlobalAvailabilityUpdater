@@ -18,5 +18,5 @@ The Global Availability Updater operates in a straightforward manner:
 
 4. **Error Handling**: Robust error handling mechanisms are in place to address unforeseen challenges, ensuring smooth operation and reliability.
 
-![diagram-export-18-06-2024-10_10_48](https://github.com/benjamintowle04/GlobalAvailabilityUpdater/assets/170199259/2592b352-110c-4f9d-a224-b33dc12e1176)
+![diagram-export-18-06-2024-10_41_20](https://github.com/benjamintowle04/GlobalAvailabilityUpdater/assets/170199259/dede0de1-61a4-4560-bc96-ce1ff0851a56)
 

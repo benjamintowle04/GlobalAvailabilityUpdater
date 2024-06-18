@@ -15,6 +15,9 @@ def convert_to_time(time_str):
         return None
 
 
+#Parses a datetime object and returns the readable, string equivilant
+#Param: datetime - the datetime object that can either be formatted by datte and time, or date only
+#Returns the same time in a readable, string format
 def convert_to_readable_time(datetime_str):
     try:
         # Try to parse the datetime string with both date and time
@@ -30,6 +33,10 @@ def convert_to_readable_time(datetime_str):
     return readable_time
 
 
+#Utilizes the quicksort algorithm to display shifts from earliest start time to latest start time
+#Param - shifts - the list of shift objects (in json format) that are unordereds
+#Returns the sorted list of shifts from earliest start time to latest start time
+#Used by the availability calculator to display empty shifts in a more readable format
 def quicksort_shifts(shifts):
     if len(shifts) <= 1:
         return shifts
@@ -41,21 +48,10 @@ def quicksort_shifts(shifts):
         return quicksort_shifts(left) + middle + quicksort_shifts(right)
 
 
-def format_schedule_name(name):
-    # Strip the whitespace at the end
-    stripped_string = name.rstrip()
-    
-    # Replace the internal whitespaces with '+'
-    replaced_string = stripped_string.replace(' ', '+')
-    
-    # Append back the original trailing whitespace
-    trailing_whitespace = name[len(stripped_string):]
-    
-    # Combine the replaced string with the trailing whitespace removed
-    final_string = replaced_string + trailing_whitespace
-    return final_string
-
-
+#Retrieves the list of strings representing each facilities name
+#Used to ensure that the list displayed in the app's dropdown menu are purely strings and not json objects
+#Param - locations - list of json objects with an "ExternalBusinessIdField"
+#Returns the list of strings each representing the value of the ExternalBusinessId field for each location
 def getLocationNames(locations):
     string_list = []
     for item in locations:
@@ -63,6 +59,10 @@ def getLocationNames(locations):
     return string_list
 
 
+#Converts tsv data into json objects that are easier to parse through
+#Needed for the getAllActiveEmployees function in the SS api call because the response defaults to tsv format
+#Param - tsv_data - the data response gotten back from SS api at endpoint /Employees
+#Returns the same data set, but in json format instead of tsv
 def parse_tsv(tsv_data):
     # Split data into lines
     lines = tsv_data.strip().split('\r\n')

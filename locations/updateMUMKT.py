@@ -4,7 +4,7 @@ external_directory = os.path.join(current_dir, "..")
 sys.path.append(external_directory)
 
 from controllers.AvailabilityUpdater import updateAvailabilityForEmployees
-from api_calls.schedule_source_api.schedule_source_api import getEmployeesAtLocation
+from client.schedule_source_api.schedule_source_api import getEmployeesAtLocation
 
 def updateMUMKT():
     employee_id_list = getEmployeesAtLocation("MU Market Cafe")

@@ -6,8 +6,8 @@ current_dir = os.path.dirname(os.path.abspath(__file__))
 external_directory = os.path.join(current_dir, "..")
 sys.path.append(external_directory)
 
-from api_calls.schedule_source_api.schedule_source_api import updateAvailability
-from api_calls.workday_api.workday_api import getStudentSchedule
+from client.schedule_source_api.schedule_source_api import updateAvailability
+from client.workday_api.workday_api import getStudentSchedule
 
 
 # Generate a dictionary with available times for each day of the week.

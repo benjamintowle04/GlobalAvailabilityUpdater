@@ -12,7 +12,7 @@ from controllers.availabilityUpdater import (
     updateAvailabilityForEmployees,
 )
 
-print("Hello World")
+#Merged this new testing script into main
 
 class TestAvailabilityUpdater(unittest.TestCase):
 

@@ -35,6 +35,14 @@ def getStudentSchedule(student_id):
         return None
     
     
-    
+def getHardCodedSchedule():
+    return [
+        {
+            "subject": "Physics",
+            "start": "8:00:00 AM",
+            "end": "9:00:00 AM",
+            "meetingDays": "MWF",
+        }
+    ]
     
     

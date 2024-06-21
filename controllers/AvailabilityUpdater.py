@@ -7,7 +7,7 @@ external_directory = os.path.join(current_dir, "..")
 sys.path.append(external_directory)
 
 from client.schedule_source_api.schedule_source_api import updateAvailability
-from client.workday_api.workday_api import getStudentSchedule
+from client.workday_api.workday_api import getStudentSchedule, getHardCodedSchedule
 
 
 # Generate a dictionary with available times for each day of the week.
@@ -53,7 +53,7 @@ def process_class_schedule(available_times_per_day, class_schedule):
         "W": "Wednesday",
         "R": "Thursday",
         "F": "Friday",
-        "A": "Saturday",
+        "S": "Saturday",
     }
 
     for class_info in class_schedule:
@@ -117,16 +117,7 @@ def format_ranges_12_hour(ranges):
 
 
 # Get the available time ranges for a given employee using their class schedule
-def getAvailableRanges(employee_id):
-    # employee_classSchedule = getStudentSchedule(employee_id) ---Too many requests to mock api
-    employee_classSchedule = [
-        {
-            "subject": "Physics",
-            "start": "12:00:00 PM",
-            "end": "1:00:00 PM",
-            "meetingDays": "MWF",
-        }
-    ]
+def getAvailableRanges(employee_id, employee_classSchedule):
     # Generate available times per day
     available_times_per_day = generate_available_times_per_day()
     # Process the class schedule to update available times
@@ -150,7 +141,8 @@ def getAvailableRanges(employee_id):
 # Uses the ss api client to update the availability on schedule source's remote server for a given location
 def updateAvailabilityForEmployees(employee_id_list):
     for employee_id in employee_id_list:
-        ranges = getAvailableRanges(employee_id)
+        schedule = getHardCodedSchedule()
+        ranges = getAvailableRanges(employee_id, schedule)
         updatedData = []
         for i in range(1, 8):
             updatedData.append(

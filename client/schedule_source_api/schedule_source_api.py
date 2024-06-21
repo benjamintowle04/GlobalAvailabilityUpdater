@@ -6,11 +6,7 @@ from urllib.parse import urlencode
 import os
 import sys
 
-from credentials import load_creds
-
-current_dir = os.path.dirname(os.path.abspath(__file__))
-external_directory = os.path.join(current_dir, "../..")
-sys.path.append(external_directory)
+from client.schedule_source_api.credentials import load_creds
 
 from utils.Paths import Paths
 from utils.URLs import URLs
@@ -47,8 +43,6 @@ def authenticate():
     response_json = response.json()
     api_token = response_json["Response"]["APIToken"]
     session_id = response_json["Response"]["SessionId"]
-    print(api_token)
-    print(session_id)
     return {"sessionId": session_id, "apiToken": api_token}
 
 

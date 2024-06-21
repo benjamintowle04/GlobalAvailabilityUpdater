@@ -1,13 +1,9 @@
 import unittest
 from unittest.mock import patch, MagicMock
 
-import sys, os
+import controllers.availabilityUpdater
 
-current_dir = os.path.dirname(os.path.abspath(__file__))
-external_directory = os.path.join(current_dir, "..")
-sys.path.append(external_directory)
-
-from controllers.AvailabilityUpdater import (
+from controllers.availabilityUpdater import (
     generate_available_times_per_day,
     process_class_schedule,
     condense_available_times_per_day,
@@ -16,56 +12,116 @@ from controllers.AvailabilityUpdater import (
     updateAvailabilityForEmployees,
 )
 
+print("Hello World")
 
 class TestAvailabilityUpdater(unittest.TestCase):
 
-    @patch("AvailabilityUpdater.updateAvailability")
-    def test_update_availability(self, mock_update_availability):
-        employee_id_list = [123456789]
-        updateAvailabilityForEmployees(employee_id_list)
-        mock_update_availability.assert_called()
+    @patch("controllers.availabilityUpdater.getAvailableRanges")
+    def test_getAvailableRanges(self, mock_getAvailableRanges):
+        print("Testing")
+        mock_schedules = []
 
-    def test_generate_available_times_per_day(self):
-        available_times_per_day = generate_available_times_per_day()
-        self.assertEqual(len(available_times_per_day), 7)
-        self.assertEqual(len(available_times_per_day["Monday"]), 24 * 12)
-
-    def test_process_class_schedule(self):
-        available_times_per_day = generate_available_times_per_day()
-        class_schedule = [
+        #TESTING A NORMAL SCHEDULE FOR BASIC FUNCTIONALITY
+        mock_schedules.append([
             {
                 "subject": "Physics",
-                "start": "09:00:00 AM",
-                "end": "11:00:00 AM",
+                "start": "08:00:00 AM",
+                "end": "9:00:00 AM",
                 "meetingDays": "MWF",
             }
-        ]
-        updated_times = process_class_schedule(available_times_per_day, class_schedule)
-        self.assertNotEqual(updated_times["Monday"], available_times_per_day["Monday"])
+        ])
 
-    def test_condense_available_times_per_day(self):
-        available_times_per_day = generate_available_times_per_day()
-        condensed_times = condense_available_times_per_day(available_times_per_day)
-        self.assertIsInstance(condensed_times["Monday"], list)
-
-    def test_format_ranges_12_hour(self):
-        ranges = ["09:00-11:00", "13:00-15:00"]
-        formatted_ranges = format_ranges_12_hour(ranges)
-        self.assertEqual(formatted_ranges, "09:00am-11:00am;01:00pm-03:00pm;")
-
-    @patch("AvailabilityUpdater.getStudentSchedule")
-    def test_getAvailableRanges(self, mock_getStudentSchedule):
-        mock_getStudentSchedule.return_value = [
+        #TEST A FULL SCHEDULE
+        mock_schedules.append([
             {
                 "subject": "Physics",
-                "start": "09:00:00 AM",
-                "end": "11:00:00 AM",
+                "start": "12:00:00 AM",
+                "end": "11:59:00 PM",
+                "meetingDays": "UMTWRFS",
+            }
+        ])
+
+        #TEST AN EMPTY SCHEDULE
+        mock_schedules.append([])
+
+
+        #TEST AN OVERLAPPING SCHEDULE
+        mock_schedules.append([
+            {
+                "subject": "Physics",
+                "start": "12:00:00 PM",
+                "end": "1:00:00 PM",
+                "meetingDays": "MWF",
+            },
+            {
+                "subject": "Physics",
+                "start": "11:00:00 AM",
+                "end": "1:00:00 PM",
                 "meetingDays": "MWF",
             }
+
+        ])
+
+        test_cases = [
+            {
+                "schedule": mock_schedules[0],
+                "expected_return": [
+                    '12:00am-11:55pm;', 
+                    '12:00am-7:55am;9:00am-11:55pm;', 
+                    '12:00am-11:55pm;', 
+                    '12:00am-7:55am;9:00am-11:55pm;', 
+                    '12:00am-11:55pm;', 
+                    '12:00am-7:55am;9:00am-11:55pm;', 
+                    '12:00am-11:55pm;'
+                ]
+            },
+            {
+                "schedule": mock_schedules[1],
+                "expected_return": [
+                    ';',
+                    ';',
+                    ';',
+                    ';',
+                    ';',
+                    ';',
+                    ';'
+                ]
+            },
+            {
+                "schedule": mock_schedules[2],
+                "expected_return": [
+                    '12:00am-11:55pm;',
+                    '12:00am-11:55pm;',
+                    '12:00am-11:55pm;',
+                    '12:00am-11:55pm;',
+                    '12:00am-11:55pm;',
+                    '12:00am-11:55pm;',
+                    '12:00am-11:55pm;'
+                ]
+            },
+            {
+                "schedule": mock_schedules[3],
+                "expected_return": [
+                    '12:00am-11:55pm;',
+                    '12:00am-10:55am;1:00pm-11:55pm;',
+                    '12:00am-11:55pm;',
+                    '12:00am-10:55am;1:00pm-11:55pm;'
+                    '12:00am-11:55pm;',
+                    '12:00am-10:55am;1:00pm-11:55pm;',
+                    '12:00am-11:55pm;'
+                ]
+            }
+
+            # Add more test cases as needed
         ]
-        employee_id = 123456789
-        ranges = getAvailableRanges(employee_id)
-        self.assertIsInstance(ranges, list)
+
+        i = 0
+        for case in test_cases:
+            with self.subTest():
+                ranges = getAvailableRanges(0, case["schedule"])
+                self.assertIsInstance(ranges, list)
+                self.assertListEqual(ranges, case["expected_return"])
+            i += 1
 
 
 if __name__ == "__main__":

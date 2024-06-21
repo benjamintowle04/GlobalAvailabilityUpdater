@@ -135,6 +135,7 @@ def getAvailableRanges(employee_id, employee_classSchedule):
         formatted_ranges = format_ranges_12_hour(ranges)
         avail_ranges.append(formatted_ranges)
 
+    print(avail_ranges)
     return avail_ranges
 
 
@@ -156,3 +157,6 @@ def updateAvailabilityForEmployees(employee_id_list):
             )
         updateAvailability(updatedData)
         print("UPDATED: " + str(employee_id))
+
+sch = getHardCodedSchedule()
+getAvailableRanges(1, sch)

@@ -39,8 +39,14 @@ def getHardCodedSchedule():
     return [
         {
             "subject": "Physics",
-            "start": "8:00:00 AM",
-            "end": "9:00:00 AM",
+            "start": "12:00:00 PM",
+            "end": "1:00:00 PM",
+            "meetingDays": "MWF",
+        },
+        {
+            "subject": "Physics",
+            "start": "11:00:00 AM",
+            "end": "1:00:00 PM",
             "meetingDays": "MWF",
         }
     ]

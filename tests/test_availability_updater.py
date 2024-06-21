@@ -105,7 +105,7 @@ class TestAvailabilityUpdater(unittest.TestCase):
                     '12:00am-11:55pm;',
                     '12:00am-10:55am;1:00pm-11:55pm;',
                     '12:00am-11:55pm;',
-                    '12:00am-10:55am;1:00pm-11:55pm;'
+                    '12:00am-10:55am;1:00pm-11:55pm;',
                     '12:00am-11:55pm;',
                     '12:00am-10:55am;1:00pm-11:55pm;',
                     '12:00am-11:55pm;'

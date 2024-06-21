@@ -6,6 +6,8 @@ from urllib.parse import urlencode
 import os
 import sys
 
+from credentials import load_creds
+
 current_dir = os.path.dirname(os.path.abspath(__file__))
 external_directory = os.path.join(current_dir, "../..")
 sys.path.append(external_directory)
@@ -21,17 +23,18 @@ from utils.helperFunctions import parse_tsv
 #        "password" - mgr password used to sign in
 #
 #  Returns: API token and Session ID codes. Needed to be used as headers to retrieve information from API
-def authenticate(code, username, password):
+def authenticate():
     ##########  Part 1 #########
     url = URLs.AUTHENTICATE.value
+    creds = load_creds()
     payload = json.dumps(
         {
             "ExternalId": "",
             "Request": {
                 "Portal": "mgr",
-                "Code": code,
-                "Username": username,
-                "Password": password,
+                "Code": creds.code,
+                "Username": creds.user,
+                "Password": creds.password,
             },
         }
     )
@@ -44,6 +47,8 @@ def authenticate(code, username, password):
     response_json = response.json()
     api_token = response_json["Response"]["APIToken"]
     session_id = response_json["Response"]["SessionId"]
+    print(api_token)
+    print(session_id)
     return {"sessionId": session_id, "apiToken": api_token}
 
 
@@ -52,7 +57,7 @@ def authenticate(code, username, password):
 #No Parameter values
 #Returns list of json data that are valid location facility codes
 def getLocations():
-    credentials = authenticate("ISU", "seans3", "8032")
+    credentials = authenticate()
     conn = http.client.HTTPSConnection("test.tmwork.net")
     payload = ""
 
@@ -93,7 +98,7 @@ def getLocations():
 # Replaces the employee's current available ranges with the new available ranges brought in from class schedule
 # No Return value
 def updateAvailability(newAvailability):
-    credentials = authenticate("ISU", "seans3", "8032")
+    credentials = authenticate()
     conn = http.client.HTTPSConnection("test.tmwork.net")
     payload = newAvailability
 
@@ -115,7 +120,7 @@ def updateAvailability(newAvailability):
 #Param - location - the facility code we are interested in
 #Returns a list of employees at the given location
 def getEmployeesAtLocation(location):
-    credentials = authenticate("ISU", "seans3", "8032")
+    credentials = authenticate()
     conn = http.client.HTTPSConnection("test.tmwork.net")
     payload = ""
     

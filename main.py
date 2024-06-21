@@ -1,5 +1,4 @@
 #File in charge of scheduling each location to update their availability on schedule source's remote server.
-import time
 from locations.updateBakery import updateBakery
 from locations.updateCafes import updateCafes
 from locations.updateConvos import updateConvos 
@@ -17,19 +16,19 @@ from locations.updateUDM import updateUDM
 
 def main():
     updateBakery()
-    updateCafes()
-    updateClydes()
-    updatePlato()
-    updateUDM()
-    updateConvos()
-    updateHawthorn()
-    updateWSM()
-    updateSummer()
-    updateSeasons()
-    updateMUMKT()   
-    updateMUFC()    
-    updateFriley()
-    updateFoodStores()
+    # updateCafes()
+    # updateClydes()
+    # updatePlato()
+    # updateUDM()
+    # updateConvos()
+    # updateHawthorn()
+    # updateWSM()
+    # updateSummer()
+    # updateSeasons()
+    # updateMUMKT()
+    # updateMUFC()
+    # updateFriley()
+    # updateFoodStores()
     print("FINISHED UPDATING AVAILABILITY FOR ALL LOCATIONS")
     
 if __name__ == "__main__":
